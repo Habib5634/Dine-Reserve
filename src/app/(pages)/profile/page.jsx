@@ -83,8 +83,8 @@ const ProfilePage = () => {
                         <div className="bg-gradient-to-r from-redish to-redish p-6 text-white">
                             <div className="flex justify-between items-center">
                                 <div>
-                                    <h1 className="text-2xl font-bold">{userData.name}</h1>
-                                    <p className="text-blue-100 capitalize">{userData.userType}</p>
+                                    <h1 className="text-2xl font-bold">{userData?.name}</h1>
+                                    <p className="text-blue-100 capitalize">{userData?.userType}</p>
                                 </div>
                                 {/* <div className="relative">
                 <div className="w-20 h-20 rounded-full bg-white flex items-center justify-center overflow-hidden border-4 border-white">
@@ -156,7 +156,7 @@ const ProfilePage = () => {
                                                 </div>
                                                 <input
                                                     type="email"
-                                                    value={userData.email}
+                                                    value={userData?.email}
                                                     className="pl-10 w-full rounded-md border-gray-300 shadow-sm bg-gray-100 cursor-not-allowed"
                                                     disabled
                                                 />
@@ -169,8 +169,8 @@ const ProfilePage = () => {
                                                 onClick={() => {
                                                     setEditMode(false)
                                                     setFormData({
-                                                        name: userData.name,
-                                                        contact: userData.contact
+                                                        name: userData?.name,
+                                                        contact: userData?.contact
                                                     })
                                                 }}
                                                 className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
@@ -192,7 +192,7 @@ const ProfilePage = () => {
                                         <FiUser className="text-gray-400" />
                                         <div>
                                             <p className="text-sm text-gray-500">Name</p>
-                                            <p className="text-gray-800">{userData.name}</p>
+                                            <p className="text-gray-800">{userData?.name}</p>
                                         </div>
                                     </div>
 
@@ -200,7 +200,7 @@ const ProfilePage = () => {
                                         <FiPhone className="text-gray-400" />
                                         <div>
                                             <p className="text-sm text-gray-500">Contact</p>
-                                            <p className="text-gray-800">{userData.contact || 'Not provided'}</p>
+                                            <p className="text-gray-800">{userData?.contact || 'Not provided'}</p>
                                         </div>
                                     </div>
 
@@ -208,7 +208,7 @@ const ProfilePage = () => {
                                         <FiMail className="text-gray-400" />
                                         <div>
                                             <p className="text-sm text-gray-500">Email</p>
-                                            <p className="text-gray-800">{userData.email}</p>
+                                            <p className="text-gray-800">{userData?.email}</p>
                                         </div>
                                     </div>
 
