@@ -4,6 +4,7 @@ import React from 'react'
 import About from './About'
 import TeamSection from './Team'
 import FAQSection from './Faqs'
+import RestaurantGallery from './RestaurantGallery'
 
 const AboutPage = () => {
     return (
@@ -11,6 +12,7 @@ const AboutPage = () => {
             <Navbar />
             <About/>
             <TeamSection/>
+            <RestaurantGallery/>
             <FAQSection/>
             <Footer />
         </div>

@@ -3,12 +3,18 @@ import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import { useDispatch } from 'react-redux'
+import axios from 'axios'
+import { API_URL } from '@/app/utils/apiUrl'
+import { closeModal } from '@/app/Store/ReduxSlice/modalSlice'
+import { fetchUserData } from '@/app/Store/Actions/userAction'
 // import { fetchUserData } from '@/Store/Actions/userActions'
 const MODE = {
     LOGIN: "LOGIN",
     REGISTER: "REGISTER",
     RESET_PASSWORD: "RESET_PASSWORD",
     EMAIL_VERIFICATION: "EMAIL_VERIFICATION",
+    FORGOT_PASSWORD: "FORGOT_PASSWORD",
+    VERIFY_OTP: "VERIFY_OTP"
 }
 const AuthComponent = () => {
     const router = useRouter();
@@ -19,18 +25,14 @@ const AuthComponent = () => {
     const dispatch = useDispatch()
     const [formData, setFormData] = useState({
 
-        fullName: "",
+        name: "",
         email: "",
-        userName: "",
         password: "",
         confirmPassword: "",
-        gender: "",
-        dob: "",
-        height: "",
-        weight: "",
-        goals: "",
+       
         newPassword: "",
-        answer: "",
+        otp: "",
+        token: ""
     });
 
     const formTitle =
@@ -40,7 +42,12 @@ const AuthComponent = () => {
                 ? "Register"
                 : mode === MODE.RESET_PASSWORD
                     ? "Reset Your Password"
-                    : "Verify Your Email";
+                    : mode === MODE.FORGOT_PASSWORD
+                        ? "Forgot Password"
+                        : mode === MODE.VERIFY_OTP
+                            ? "Verify OTP"
+                            : "Verify Your Email";
+
 
     const buttonTitle =
         mode === MODE.LOGIN
@@ -49,7 +56,11 @@ const AuthComponent = () => {
                 ? "Register"
                 : mode === MODE.RESET_PASSWORD
                     ? "Reset"
-                    : "Verify";
+                    : mode === MODE.FORGOT_PASSWORD
+                        ? "Send OTP"
+                        : mode === MODE.VERIFY_OTP
+                            ? "Verify"
+                            : "Verify";
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -65,41 +76,63 @@ const AuthComponent = () => {
             let response;
             switch (mode) {
                 case MODE.REGISTER:
-                    // response = await axios.post(`${API_URL}/auth/register`, { firstName: formData.firstName, lastName: formData.lastName, email: formData.email, password: formData.password });
-                    // console.log(response)
-                    // if (response.status === 201) {
-                    //     toast.success("Registered Successfully")
-                    //     setMode(MODE.LOGIN)
-                    //     console.log("FormData Data:", formData);
-                    // } else {
-                    //     toast.error("Something went wrong")
-                    // }
+                    response = await axios.post(`${API_URL}/user/register`, {
+                        name: formData.name,
+                        email: formData.email,
+                        password: formData.password,
+                    });
+                    console.log(response)
+                    if (response.status === 201) {
+                        toast.success("Registered Successfully")
+                        setMode(MODE.LOGIN)
+                        console.log("FormData Data:", formData);
+                    } else {
+                        toast.error("Something went wrong")
+                    }
                     break;
                 case MODE.LOGIN:
-                    // response = await axios.post(`${API_URL}/auth/login`, { email: formData.email, password: formData.password });
+                    response = await axios.post(`${API_URL}/user/login`, { email: formData.email, password: formData.password });
 
-                    // if (response.status === 200) {
-                    //     localStorage.setItem('token', response.data.token)
-                    //     toast.success("Login Successfully")
-                    //     dispatch(closeModal());
-                    //     dispatch(fetchUserData())
-                    //     // router.push('/')
-                    // } else {
-                    //     toast.error("Something went wrong")
-                    // }
-
-                    break;
-                case MODE.RESET_PASSWORD:
-                    try {
-                        // const response = await axios.post(`${API_URL}/auth/resetPassword`, { email: formData.email, newPassword: formData.newPassword });
-                        // setMode(MODE.LOGIN)
-                        // toast.success(response.data.message)
-                    } catch (error) {
-                        console.log(error.response.data.message)
-                        console.log(toast.success)
+                    if (response.status === 200) {
+                        localStorage.setItem('token', response.data.token)
+                        console.log(response.data)
+                        toast.success("Login Successfully")
+                        dispatch(closeModal());
+                        dispatch(fetchUserData())
+                        if (response.data.userType === "admin") {
+                            router.push('/dashboard')
+                        } else {
+                            router.push('/')
+                        }
+                        // router.push('/')
+                    } else {
+                        toast.error("Something went wrong")
                     }
 
-
+                    break;
+                case MODE.FORGOT_PASSWORD:
+                    response = await axios.post(`${API_URL}/user/forgot-password`, {
+                        email: formData.email
+                    });
+                    toast.success(response.data.message);
+                    setMode(MODE.VERIFY_OTP);
+                    break;
+                case MODE.VERIFY_OTP:
+                    response = await axios.post(`${API_URL}/user/verify-otp`, {
+                        email: formData.email,
+                        otp: formData.otp
+                    });
+                    toast.success(response.data.message);
+                    setFormData(prev => ({ ...prev, token: response.data.token }));
+                    setMode(MODE.RESET_PASSWORD);
+                    break;
+                case MODE.RESET_PASSWORD:
+                    response = await axios.post(`${API_URL}/user/reset-password`, {
+                        token: formData.token,
+                        newPassword: formData.newPassword
+                    });
+                    toast.success(response.data.message);
+                    setMode(MODE.LOGIN);
                     break;
                 case MODE.EMAIL_VERIFICATION:
                     //   response = await axios.post(`${BASE_URL}/user/verify-email`, { email, emailCode });
@@ -123,38 +156,28 @@ const AuthComponent = () => {
         <form className="flex flex-col gap-8 overflow-y-auto h-full  rounded-2xl  w-full max-w-2xl p-6"
             onSubmit={handleSubmit}
         >
-            <h1 className="text-3xl font-semibold text-orange2">{formTitle}</h1>
+            <h1 className="text-3xl font-semibold text-redish2">{formTitle}</h1>
             <div className='grid grid-cols-1 md:grid-cols-2 items-center gap-4'>
 
                 {mode === MODE.REGISTER ? (
                     <>
-                        <div className="flex flex-col gap-2">
+                        <div className="col-span-2 flex flex-col gap-2">
                             <label className="text-18 text-redish ">Full Name</label>
                             <input
                                 type="text"
-                                name="fullName"
+                                name="name"
                                 placeholder="john"
-                                value={formData?.fullName}
+                                value={formData?.name}
                                 className="ring-2 ring-redish rounded-md p-4"
                                 onChange={handleChange}
                             />
                         </div>
-                        <div className="flex flex-col gap-2">
-                            <label className="text-18 text-redish ">User Name</label>
-                            <input
-                                type="text"
-                                name="userName"
-                                placeholder="john"
-                                value={formData?.userName}
-                                className="ring-2 ring-redish rounded-md p-4"
-                                onChange={handleChange}
-                            />
-                        </div>
+                     
                     </>
                 ) : null}
 
-                {mode !== MODE.EMAIL_VERIFICATION ? (
-                    <div className={`${(mode === MODE.LOGIN || mode === MODE.RESET_PASSWORD) ? 'col-span-2' : ''} flex flex-col gap-2`}>
+                {(mode === MODE.LOGIN || mode === MODE.FORGOT_PASSWORD || mode === MODE.REGISTER) ? (
+                    <div className="col-span-2 flex flex-col gap-2">
                         <label className="text-18 text-redish ">E-mail</label>
                         <input
                             type="email"
@@ -163,36 +186,38 @@ const AuthComponent = () => {
                             value={formData?.email}
                             className="ring-2 ring-redish rounded-md p-4"
                             onChange={handleChange}
+                            required
                         />
                     </div>
-                ) : (
-                    <div className="flex flex-col gap-2">
-                        <label className="text-18 text-redish ">Verification Code</label>
+                ) : null}
+                {mode === MODE.VERIFY_OTP && (
+                    <div className="col-span-2 flex flex-col gap-2">
+                        <label className="text-18 text-redish ">OTP</label>
                         <input
                             type="text"
-                            name="emailCode"
-                            placeholder="Code"
-                            value={formData?.emailCode}
+                            name="otp"
+                            placeholder="Enter OTP sent to your email"
+                            value={formData?.otp}
                             className="ring-2 ring-redish rounded-md p-4"
                             onChange={handleChange}
+                            required
                         />
                     </div>
                 )}
-                {mode === MODE.RESET_PASSWORD ? (
-                    <>
-                        <div className={`${mode === MODE.RESET_PASSWORD ? 'col-span-2' : ''} flex flex-col gap-2`}>
-                            <label className="text-18 text-redish ">New Password</label>
-                            <input
-                                type="newPassword"
-                                name="newPassword"
-                                placeholder="Enter your new password"
-                                className="ring-2 ring-redish rounded-md p-4"
-                                onChange={handleChange}
-                            />
-                        </div>
-
-                    </>
-                ) : null}
+                {mode === MODE.RESET_PASSWORD && (
+                    <div className="col-span-2 flex flex-col gap-2">
+                        <label className="text-18 text-redish ">New Password</label>
+                        <input
+                            type="password"
+                            name="newPassword"
+                            placeholder="Enter your new password"
+                            value={formData?.newPassword}
+                            className="ring-2 ring-redish rounded-md p-4"
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+                )}
                 {mode === MODE.LOGIN || mode === MODE.REGISTER ? (
                     <>
                         <div className={`${mode === MODE.LOGIN ? 'col-span-2' : ''} flex flex-col gap-2`}>
@@ -222,15 +247,27 @@ const AuthComponent = () => {
                             />
                         </div>
                        
+                       
+                      
+                        
 
                     </>}
             </div>
             {mode === MODE.LOGIN && (
                 <div
                     className="text-18 underline cursor-pointer"
-                    onClick={() => setMode(MODE.RESET_PASSWORD)}
+                    onClick={() => setMode(MODE.FORGOT_PASSWORD)}
                 >
                     Forgot Password?
+                </div>
+            )}
+
+            {mode === MODE.VERIFY_OTP && (
+                <div
+                    className="text-18 underline cursor-pointer"
+                    onClick={() => setMode(MODE.FORGOT_PASSWORD)}
+                >
+                    Resend OTP
                 </div>
             )}
             <button
@@ -264,7 +301,7 @@ const AuthComponent = () => {
                     Go back to Login
                 </div>
             )}
-            {message && <div className="text-orange2-600 text-18">{message}</div>}
+            {message && <div className="text-redish2-600 text-18">{message}</div>}
 
 
         </form>

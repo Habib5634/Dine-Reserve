@@ -1,18 +1,22 @@
 'use client'
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Link from "next/link";
 import { FaStar } from "react-icons/fa6";
+import { useRestaurants } from "./useRestaurants";
+
 const Featured = () => {
-    const restaurants = [
-        { id: 1, name: "Alzar Cafe", image: "/assets/alzar-cafe/alzar1.jpg" ,rating:"4.5"},
-        { id: 2, name: "Sapna Shenwari", image: "/assets/sapna-shenvari/sapna1.jpg",rating:"4.5" },
-        { id: 3, name: "Soul String cafe", image: "/assets/soul-string/soul1.jpg" ,rating:"4.5"},
-        { id: 4, name: "Dynasty Marriot", image: "/assets/dynasty/dynasty1.jpg" ,rating:"4.5"},
-      ];
-    
+    // const restaurants = [
+    //     { id: 1, name: "Alzar Cafe", image: "/assets/alzar-cafe/alzar1.jpg" ,rating:"4.5"},
+    //     { id: 2, name: "Sapna Shenwari", image: "/assets/sapna-shenvari/sapna1.jpg",rating:"4.5" },
+    //     { id: 3, name: "Soul String cafe", image: "/assets/soul-string/soul1.jpg" ,rating:"4.5"},
+    //     { id: 4, name: "Dynasty Marriot", image: "/assets/dynasty/dynasty1.jpg" ,rating:"4.5"},
+    //   ];
+      
+
+      const {restaurants} = useRestaurants()
       const settings = {
         dots: true,
         infinite: true,
@@ -50,18 +54,18 @@ const Featured = () => {
       <div className="w-full max-w-6xl mx-auto px-6 py-10">
       <h2 className="text-2xl font-bold mb-4 text-center">Featured Restaurants</h2>
       <Slider {...settings}>
-        {restaurants.map((restaurant) => (
-          <div key={restaurant.id} className="p-2">
+        {restaurants?.slice(0,5)?.map((restaurant) => (
+          <div key={restaurant?._id} className="p-2">
             <div className="bg-white shadow-lg border border-yellow  rounded-lg overflow-hidden">
               <img
-                src={restaurant.image}
-                alt={restaurant.name}
+                src={restaurant?.images[0]}
+                alt={restaurant?.name}
                 className="w-full h-60 object-cover"
               />
               <div className="p-4 text-center">
-                <h3 className="text-lg font-semibold text-redish">{restaurant.name}</h3>
-                <h3 className="  "><span className="text-yellow"><FaStar/> </span>{restaurant.rating} Rating</h3>
-                <Link href={`/restaurants/${restaurant.id}`}>
+                <h3 className="text-lg font-semibold text-redish">{restaurant?.name}</h3>
+                <h3 className="  flex justify-center items-center "><span className="text-yellow"><FaStar/> </span>{restaurant?.averageRating || "4.5"} Rating</h3>
+                <Link href={`/restaurants/${restaurant?._id}`}>
                   <button className=" py-2 px-6 text-white rounded-md  cursor-pointer bg-orange mt-3">View Profile</button>
                 </Link>
               </div>
