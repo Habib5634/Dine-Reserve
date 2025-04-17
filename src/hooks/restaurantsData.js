@@ -13,9 +13,9 @@ export const restaurants = [
       id: 2,
       name: "Sapna Shenwari",
       image: [
-          "/assets/sapna-shenwari/sapna1.jpg",
-          "/assets/sapna-shenwari/sapna2.jpg",
-          "/assets/sapna-shenwari/sapna3.jpg"
+          "/assets/sapna-shenvari/sapna1.jpg",
+          "/assets/sapna-shenvari/sapna2.jpg",
+          "/assets/sapna-shenvari/sapna3.jpg"
       ],
       location: "456 Spice Road, Cultural District"
   },
