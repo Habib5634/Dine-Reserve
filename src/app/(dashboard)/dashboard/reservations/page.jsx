@@ -90,9 +90,7 @@ const [reservation,setReservation] = useState(null)
 
     // Confirm status change
     const confirmStatusChange = async () => {
-        console.log(currentReservation)
-        console.log(selectedStatus)
-        console.log(statusType)
+        
         if (statusType === "payment") {
             try {
 
@@ -178,11 +176,11 @@ const [reservation,setReservation] = useState(null)
                                     {/* Table cells remain the same as before */}
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <select
-                                            value={reservation?.paymentStatus}
+                                            value={reservation?.payment?.status}
                                             onChange={(e) => initiateStatusChange(reservation, 'payment', e.target.value)}
-                                            className={`px-2 py-1 rounded-md text-sm ${reservation.paymentStatus === 'completed' ? 'bg-green-100 text-green-800' :
-                                                    reservation.paymentStatus === 'failed' ? 'bg-red-100 text-red-800' :
-                                                        reservation.paymentStatus === 'refunded' ? 'bg-red-100 text-blue-800' :
+                                            className={`px-2 py-1 rounded-md text-sm ${reservation.payment?.status === 'completed' ? 'bg-green-100 text-green-800' :
+                                                    reservation.payment?.status === 'failed' ? 'bg-red-100 text-red-800' :
+                                                        reservation.payment?.status === 'refunded' ? 'bg-red-100 text-blue-800' :
                                                             'bg-yellow-100 text-yellow-800'
                                                 }`}
                                         >

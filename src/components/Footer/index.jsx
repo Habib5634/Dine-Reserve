@@ -1,4 +1,5 @@
 'use client'
+import Link from "next/link";
 import React from "react";
 import { FaFacebookF, FaInstagram, FaTwitter, FaLinkedinIn } from "react-icons/fa";
 
@@ -18,11 +19,28 @@ const Footer = () => {
         <div className=" text-center">
           <h3 className="font-bold mb-2">Quick Links</h3>
           <ul className="space-y-1">
-            <li><a href="#" className="hover:underline">Restaurants</a></li>
-            <li><a href="#" className="hover:underline">About Us</a></li>
-            <li><a href="#" className="hover:underline">Terms of Service</a></li>
-            <li><a href="#" className="hover:underline">Privacy Policy</a></li>
-          </ul>
+  <li>
+    <Link href="/restaurants" className="hover:underline">
+      Restaurants
+    </Link>
+  </li>
+  <li>
+    <Link href="/services" className="hover:underline">
+      Services
+    </Link>
+  </li>
+  <li>
+    <Link href="/about" className="hover:underline">
+      About Us
+    </Link>
+  </li>
+ 
+  <li>
+    <Link href="/contact" className="hover:underline">
+      Contact
+    </Link>
+  </li>
+</ul>
         </div>
 
         {/* Contact Info */}

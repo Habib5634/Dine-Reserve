@@ -49,7 +49,7 @@ useEffect(() => {
     // Effect to handle screen resize
     useEffect(() => {
         const handleResize = () => {
-            if (window.innerWidth < 768) {
+            if (typeof window !== 'undefined' && window.innerWidth < 768) {
                 setSidebarOpen(false); // Close sidebar on small screens
             } else {
                 setSidebarOpen(true); // Open sidebar on larger screens
@@ -77,7 +77,7 @@ useEffect(() => {
             <div
                 className={` bg-blue  min-h-screen h-full text-white ${isSidebarOpen ? 'w-64' : 'w-16'} transition-width duration-300 relative`}
                 style={{
-                    position: window.innerWidth < 768 ? 'absolute' : 'relative', // Absolute position on small screens
+                    position: (typeof window !== 'undefined' &&window.innerWidth < 768) ? 'absolute' : 'relative', // Absolute position on small screens
                     zIndex: 50, // Ensure sidebar is above other content
                     height: '100vh', // Full height
                     left: isSidebarOpen ? '0px' : '0px', // Hide sidebar when closed on small screens
@@ -224,7 +224,7 @@ useEffect(() => {
             </div>
 
             {/* Main Content */}
-            <div className={`${(window.innerWidth < 768 && !isSidebarOpen) && 'pl-16'}  h-screen overflow-y-auto border-l border-white1 flex-1 overflow-x-hidden relative`}>
+            <div className={`${(typeof window !== 'undefined' && window.innerWidth < 768 && !isSidebarOpen) && 'pl-16'}  h-screen overflow-y-auto border-l border-white1 flex-1 overflow-x-hidden relative`}>
                 <div className='h-20 border-b sticky top-0 z-20 bg-white  pl-10 pr-4 flex justify-between items-center'>
                     <div>
                     <h1 className='text-blue font-bold text-[18px] md:text-3xl capitalize'>{userData?.userType} Dashboard</h1>

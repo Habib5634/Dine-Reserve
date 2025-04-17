@@ -261,7 +261,7 @@ const UsersPage = () => {
                                                 Select your UserType
                                             </option>
                                             <option value="admin">Admin</option>
-                                            <option value="nutritionist">manager</option>
+                                            <option value="manager">manager</option>
                                             <option value="customer">Customer</option>
                                         </select>
                                     </div>
